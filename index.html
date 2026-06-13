@@ -3,59 +3,717 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A Special Surprise for Maya</title>
+    <title>A Special Surprise for Maya 🌸</title>
     <style>
         body {
+            margin: 0;
+            padding: 0;
+            background-color: #ffeef2;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #ffeef2;
-            color: #d63384;
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background-color 1s ease;
+        }
+
+        /* Introduction Landing Card */
+        #intro-card {
             text-align: center;
-        }
-        .container {
             padding: 20px;
+            max-width: 600px;
         }
-        button {
-            padding: 12px 24px;
+        #intro-card h1 {
+            color: #d63384;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        #intro-card p {
+            color: #d63384;
+            font-size: 16px;
+            margin-bottom: 25px;
+            opacity: 0.8;
+        }
+
+        /* Main App Container */
+        #app-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        h1.app-title { color: #d63384; font-size: 24px; margin-top: 20px; text-align: center; }
+        p.app-subtitle { color: #85405e; margin-bottom: 20px; }
+
+        /* Picker Menu */
+        .flower-picker {
+            display: flex;
+            gap: 50px;
+            margin-bottom: 40px;
+            z-index: 30;
+        }
+        .picker-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .picker-option:hover {
+            transform: scale(1.1);
+        }
+
+        .picker-preview {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .preview-carnation { background: radial-gradient(circle, #ff65a3 40%, #ff1744 100%); }
+        .preview-lily { background: radial-gradient(circle, #ffffff 30%, #d1a3ff 100%); }
+
+        .btn-primary {
+            padding: 12px 30px;
             font-size: 18px;
             background-color: #d63384;
             color: white;
             border: none;
             border-radius: 25px;
             cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
+            box-shadow: 0 4px 10px rgba(214, 51, 132, 0.3);
+            transition: transform 0.2s, background-color 0.2s;
+            margin: 20px 0;
         }
-        button:hover {
-            transform: scale(1.1);
+        .btn-primary:hover {
+            transform: scale(1.05);
+            background-color: #c22575;
         }
-        .hidden { 
-            display: none; 
+
+        /* Bouquet Canvas Area */
+        #garden-container {
+            position: relative;
+            width: 320px;
+            height: 320px;
+            margin-top: auto;
+            margin-bottom: 20px;
+        }
+
+        /* Bouquet Wrapping Paper */
+        #bouquet-wrapper {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 115px; 
+            background: linear-gradient(135deg, #f3e1ce 0%, #e5cdb4 100%); 
+            clip-path: polygon(0% 0%, 100% 0%, 70% 100%, 30% 100%);
+            z-index: 20;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: center;
+        }
+        #bouquet-wrapper::after {
+            content: '💝';
+            position: absolute;
+            bottom: 20px; 
+            font-size: 28px;
+            z-index: 25;
+        }
+
+        /* Flowers Engine */
+        .flower {
+            position: absolute;
+            bottom: 35px; 
+            left: 50%;
+            width: 4px;
+            display: flex;
+            flex-direction: column-reverse; 
+            align-items: center;
+            transform-origin: bottom center;
+            animation: spawnIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards,
+                      gentleSway 3.5s ease-in-out infinite alternate;
+        }
+
+        .stem {
+            width: 4px;
+            background: linear-gradient(to top, #235230, #4da769);
+            border-radius: 2px;
+        }
+
+        /* --- CARNATION --- */
+        .carnation-head {
+            position: relative;
+            width: 65px;
+            height: 65px;
+            margin-bottom: -20px; 
+            transform: scale(0);
+            animation: bloomEffect 1.2s 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        .carnation-petal {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, #ff6b9d 20%, #e61f64 80%);
+            border-radius: 40% 60% 40% 60% / 60% 40% 60% 40%;
+            opacity: 0.95;
+            border: 1px dashed rgba(255,255,255,0.25);
+        }
+        .c1 { transform: rotate(0deg) scale(0.9); }
+        .c2 { transform: rotate(35deg) scale(0.95); background: #ff4081; }
+        .c3 { transform: rotate(70deg) scale(1); }
+        .c4 { transform: rotate(105deg) scale(0.85); background: #f50057; }
+        .c5 { transform: rotate(140deg) scale(0.95); }
+        .c6 { transform: rotate(175deg) scale(0.9); }
+
+        /* --- LILY --- */
+        .lily-head {
+            position: relative;
+            width: 70px;
+            height: 70px;
+            margin-bottom: -15px;
+            transform: scale(0);
+            animation: bloomEffect 1.2s 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        .lily-petal {
+            position: absolute;
+            width: 26px;
+            height: 70px;
+            background: linear-gradient(to top, #ffffff 30%, #e3c4ff 100%);
+            border-radius: 50% 50% 50% 50% / 75% 75% 25% 25%;
+            left: 22px;
+            transform-origin: bottom center;
+            box-shadow: inset 0 0 8px rgba(214, 163, 255, 0.25);
+        }
+        .l1 { transform: rotate(0deg); }
+        .l2 { transform: rotate(60deg); }
+        .l3 { transform: rotate(120deg); }
+        .l4 { transform: rotate(180deg); }
+        .l5 { transform: rotate(240deg); }
+        .l6 { transform: rotate(300deg); }
+        
+        .lily-center {
+            position: absolute;
+            top: 22px;
+            left: 31px;
+            width: 8px;
+            height: 14px;
+            background: #ffe359;
+            border-radius: 50% 50% 0 0;
+            z-index: 5;
+        }
+
+        /* --- 3D POLAROID GALLERY SYSTEM --- */
+        #gallery-container {
+            display: none;
+            width: 100%;
+            max-width: 900px;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 25px;
+            margin: 40px 0 20px 0;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+
+        .polaroid-wrapper {
+            perspective: 1000px;
+            width: 240px;
+            height: 300px;
+            cursor: pointer;
+        }
+
+        .polaroid-card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+            border-radius: 4px;
+        }
+
+        .polaroid-card.flipped { transform: rotateY(180deg); }
+
+        .polaroid-front, .polaroid-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            background-color: #ffffff;
+            border-radius: 4px;
+            padding: 15px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .polaroid-front .photo-box {
+            width: 100%;
+            height: 190px;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 45px;
+        }
+        
+        .bg-1 { background: linear-gradient(45deg, #ff9a9e 0%, #fecfef 100%); }
+        .bg-2 { background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%); }
+        .bg-3 { background: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%); }
+
+        .polaroid-front .caption {
+            margin-top: auto;
+            text-align: center;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            color: #555;
+            font-size: 15px;
+            border-top: 1px dashed #eee;
+            padding-top: 12px;
+        }
+
+        .polaroid-back {
+            transform: rotateY(180deg);
+            background-color: #fffdf6; 
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            border: 2px solid #fff;
+        }
+        
+        .polaroid-back p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #444;
+            margin: 0;
+        }
+
+        .tap-hint {
+            color: #d63384;
+            font-size: 13px;
+            margin-top: 10px;
+            font-weight: bold;
+            animation: pulse 1.5s infinite alternate;
+        }
+
+        /* --- ULTIMATE COMBINED FINAL SCREEN --- */
+        #final-screen {
+            display: none;
+            width: 100%;
+            max-width: 550px;
+            text-align: center;
+            padding: 30px 24px;
+            margin: 20px;
+            background: linear-gradient(to bottom, #1f1124 0%, #0c0612 100%);
+            border-radius: 24px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            box-sizing: border-box;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .closing-title { color: #ff65a3; margin-top: 0; font-size: 24px; }
+        .closing-text { line-height: 1.8; color: #d0c4de; font-size: 15px; margin-bottom: 30px; }
+
+        /* Real Audio-Synced Music Player UI */
+        .music-player {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 35px;
+            border: 1px solid rgba(255,255,255,0.08);
+            text-align: left;
+            cursor: pointer;
+        }
+        .vinyl-disk {
+            width: 55px;
+            height: 55px;
+            background: radial-gradient(circle, #000 30%, #333 40%, #111 70%, #ff65a3 90%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            animation: spinDisc 4s linear infinite;
+            animation-play-state: paused; /* Controlled by JS */
+        }
+        .vinyl-center { width: 12px; height: 12px; background: #ffeef2; border-radius: 50%; }
+        .track-info { flex-grow: 1; }
+        .track-title { color: #fff; font-weight: bold; font-size: 15px; margin: 0 0 4px 0; }
+        .track-artist { color: #ff65a3; font-size: 13px; margin: 0 0 8px 0; opacity: 0.8; }
+        .progress-bar { width: 100%; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; position: relative; }
+        .progress-current { width: 0%; height: 100%; background: #ff65a3; border-radius: 2px; }
+        .player-controls { color: #fff; font-size: 18px; width: 35px; text-align: center; opacity: 0.9; }
+
+        /* Interactive Starry Sky Frame */
+        .starry-sky-box {
+            width: 100%;
+            height: 220px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+            border: 1px dashed rgba(255, 101, 163, 0.3);
+            cursor: pointer;
+        }
+        .sky-prompt {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #a497b3;
+            font-size: 14px;
+            font-weight: bold;
+            pointer-events: none;
+            text-align: center;
+            width: 90%;
+        }
+
+        .interactive-star {
+            position: absolute;
+            font-size: 18px;
+            pointer-events: none;
+            animation: starRise 2s ease-out forwards;
+        }
+        .star-wish-text {
+            position: absolute;
+            white-space: nowrap;
+            color: #ffe89e;
+            font-size: 12px;
+            font-weight: bold;
+            background: rgba(12, 6, 18, 0.85);
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,232,158,0.2);
+            pointer-events: none;
+            transform: translate(-50%, -30px);
+            animation: wishFade 2s ease-out forwards;
+        }
+
+        /* Helpers & Keyframes */
+        .hidden { display: none !important; }
+        
+        @keyframes spawnIn {
+            0% { transform: translateX(-50%) scale(0) rotate(var(--base-rot)); opacity: 0; }
+            100% { transform: translateX(-50%) scale(1) rotate(var(--base-rot)); opacity: 1; }
+        }
+        @keyframes bloomEffect { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+        @keyframes gentleSway {
+            0% { transform: translateX(-50%) rotate(calc(var(--base-rot) - 2.5deg)); }
+            100% { transform: translateX(-50%) rotate(calc(var(--base-rot) + 2.5deg)); }
+        }
+        @keyframes pulse { 0% { opacity: 0.5; } 100% { opacity: 1; } }
+        .fade-in { animation: opacityFade 1.2s forwards; }
+        @keyframes opacityFade {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes spinDisc { to { transform: rotate(360deg); } }
+        
+        @keyframes starRise {
+            0% { transform: scale(0); opacity: 0; }
+            20% { transform: scale(1.3); opacity: 1; }
+            100% { transform: translateY(-60px) scale(0.8); opacity: 0; }
+        }
+        @keyframes wishFade {
+            0% { opacity: 0; transform: translate(-50%, -10px); }
+            20% { opacity: 1; transform: translate(-50%, -32px); }
+            80% { opacity: 1; }
+            100% { opacity: 0; transform: translate(-50%, -55px); }
         }
     </style>
 </head>
 <body>
 
-    <div id="start-card" class="container">
+    <audio id="bg-music" src="music.mp3" loop></audio>
+
+    <div id="intro-card">
         <h1>Hey Maya! I made a little something for you. ❤️</h1>
         <p>Click the button below to open it.</p>
-        <button onclick="revealSurprise()">Click Me</button>
+        <button class="btn-primary" onclick="startApp()">Click Me</button>
     </div>
 
-    <div id="surprise-card" class="container hidden">
-        <h1>Surprise! 🎉</h1>
-        <p>It works! This is just the beginning. I can't wait to show you what's next.</p>
+    <div id="app-container">
+        <h1 class="app-title" id="main-title">Pick some flowers to build your bouquet, Maya ✨</h1>
+        <p class="app-subtitle" id="counter">Flowers added: 0 / 6</p>
+
+        <div id="flower-picker" class="flower-picker">
+            <div class="picker-option" onclick="addFlower('carnation')">
+                <div class="picker-preview preview-carnation"></div>
+                <span style="display:block; margin-top:10px; color:#d63384; font-weight:bold;">Carnation</span>
+            </div>
+            
+            <div class="picker-option" onclick="addFlower('lily')">
+                <div class="picker-preview preview-lily"></div>
+                <span style="display:block; margin-top:10px; color:#b983e4; font-weight:bold;">Lily</span>
+            </div>
+        </div>
+
+        <div id="garden-container">
+            <div id="bouquet-wrapper"></div>
+        </div>
+
+        <div id="gallery-container">
+            
+            <div class="polaroid-wrapper" onclick="flipCard(this)">
+                <div class="polaroid-card">
+                    <div class="polaroid-front">
+                        <div class="photo-box bg-1">🌸</div>
+                        <div class="caption">A Gentle Gesture</div>
+                    </div>
+                    <div class="polaroid-back">
+                        <p>I know things have been quiet lately, but I wanted to make sure you received your favorite flowers anyway. They look beautiful together, don't they?</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="polaroid-wrapper" onclick="flipCard(this)">
+                <div class="polaroid-card">
+                    <div class="polaroid-front">
+                        <div class="photo-box bg-2">💭</div>
+                        <div class="caption">Thoughtful Space</div>
+                    </div>
+                    <div class="polaroid-back">
+                        <p>[Customize this text with a gentle, supportive thought or lighthearted memory.]</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="polaroid-wrapper" onclick="flipCard(this)">
+                <div class="polaroid-card">
+                    <div class="polaroid-front">
+                        <div class="photo-box bg-3">✨</div>
+                        <div class="caption">Wishing You Well</div>
+                    </div>
+                    <div class="polaroid-back">
+                        <p>[Customize this text with a sincere note wishing her happiness and comfort in whatever she is handling right now.]</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <p id="tap-instruction" class="tap-hint hidden">✨ Tap a photo to flip it over! ✨</p>
+
+        <button id="next-page-btn" class="btn-primary hidden" onclick="showFinalPage()">Click for a final note ✨</button>
+
+        <div id="final-screen">
+            
+            <h2 class="closing-title">Just wanted to say... ❤️</h2>
+            <p class="closing-text">
+                No pressure to reply or say anything heavy. I truly just wanted to build something tailored to your favorites and hope it brought a brief, genuine smile to your face today. Take care of yourself, Maya.
+            </p>
+
+            <div class="music-player" onclick="toggleAudio()">
+                <div class="vinyl-disk" id="vinyl">
+                    <div class="vinyl-center"></div>
+                </div>
+                <div class="track-info">
+                    <p class="track-title" id="player-title">Song Title Here</p>
+                    <p class="track-artist">Picked For You 🎵</p>
+                    <div class="progress-bar">
+                        <div class="progress-current" id="track-progress"></div>
+                    </div>
+                </div>
+                <div class="player-controls" id="play-icon">▶</div>
+            </div>
+
+            <div class="starry-sky-box" id="skyBox" onclick="spawnStar(event)">
+                <div class="sky-prompt" id="skyPrompt">✨ Tap anywhere inside this sky to plant a wish... ✨</div>
+            </div>
+
+        </div>
+
     </div>
 
     <script>
-        function revealSurprise() {
-            document.getElementById('start-card').classList.add('hidden');
-            document.getElementById('surprise-card').classList.remove('hidden');
+        let flowerCount = 0;
+        const maxFlowers = 6; 
+
+        const bouquetArrangement = [
+            { baseRotation: -28, stemLength: 150, zIndex: 5 }, 
+            { baseRotation: 28,  stemLength: 150, zIndex: 6 }, 
+            { baseRotation: -18, stemLength: 175, zIndex: 7 }, 
+            { baseRotation: 18,  stemLength: 175, zIndex: 8 }, 
+            { baseRotation: -7,  stemLength: 195, zIndex: 9 }, 
+            { baseRotation: 7,   stemLength: 195, zIndex: 10 } 
+        ];
+
+        const starWishes = [
+            "I hope your week goes incredibly smoothly 💫",
+            "I hope you are getting plenty of restful sleep 🧸",
+            "May you find a reason to smile today Sunshine ✨",
+            "I hope that heavy goal becomes easier to reach 🏔️",
+            "Remember to take things one small step at a time 🌱",
+            "Wishing you quiet, peaceful moments of comfort ☕",
+            "You are doing much better than you realize 🤍"
+        ];
+        let wishIndex = 0;
+
+        function startApp() {
+            document.getElementById('intro-card').classList.add('hidden');
+            const appContainer = document.getElementById('app-container');
+            appContainer.style.display = 'flex';
+            document.body.style.justifyContent = 'flex-start';
+        }
+
+        function addFlower(type) {
+            if (flowerCount >= maxFlowers) return;
+
+            const garden = document.getElementById('garden-container');
+            const flowerWrapper = document.createElement('div');
+            flowerWrapper.classList.add('flower');
+            
+            const config = bouquetArrangement[flowerCount];
+            flowerWrapper.style.zIndex = config.zIndex;
+            flowerWrapper.style.setProperty('--base-rot', `${config.baseRotation}deg`);
+
+            const stem = document.createElement('div');
+            stem.classList.add('stem');
+            stem.style.height = `${config.stemLength}px`;
+            flowerWrapper.appendChild(stem);
+
+            if (type === 'carnation') {
+                const head = document.createElement('div');
+                head.classList.add('carnation-head');
+                for (let i = 1; i <= 6; i++) {
+                    const petal = document.createElement('div');
+                    petal.classList.add('carnation-petal', `c${i}`);
+                    head.appendChild(petal);
+                }
+                flowerWrapper.appendChild(head);
+            } else if (type === 'lily') {
+                const head = document.createElement('div');
+                head.classList.add('lily-head');
+                for (let i = 1; i <= 6; i++) {
+                    const petal = document.createElement('div');
+                    petal.classList.add('lily-petal', `l${i}`);
+                    head.appendChild(petal);
+                }
+                const center = document.createElement('div');
+                center.classList.add('lily-center');
+                head.appendChild(center);
+                flowerWrapper.appendChild(head);
+            }
+
+            garden.appendChild(flowerWrapper);
+            flowerCount++;
+            document.getElementById('counter').innerText = `Flowers added: ${flowerCount} / ${maxFlowers}`;
+
+            if (flowerCount === maxFlowers) {
+                revealGallery();
+            }
+        }
+
+        function revealGallery() {
+            document.getElementById('flower-picker').style.display = 'none';
+            document.getElementById('counter').style.display = 'none';
+            document.getElementById('main-title').innerText = "Your bouquet is ready, Maya ❤️";
+
+            const gallery = document.getElementById('gallery-container');
+            gallery.style.display = 'flex';
+            gallery.classList.add('fade-in');
+
+            const hint = document.getElementById('tap-instruction');
+            hint.classList.remove('hidden');
+            hint.classList.add('fade-in');
+
+            const nextBtn = document.getElementById('next-page-btn');
+            nextBtn.classList.remove('hidden');
+            nextBtn.classList.add('fade-in');
+            
+            setTimeout(() => {
+                gallery.scrollIntoView({ behavior: 'smooth' });
+            }, 600);
+        }
+
+        function flipCard(wrapper) {
+            const card = wrapper.querySelector('.polaroid-card');
+            card.classList.toggle('flipped');
+        }
+
+        function showFinalPage() {
+            document.getElementById('main-title').style.display = 'none';
+            document.getElementById('garden-container').style.display = 'none';
+            document.getElementById('gallery-container').style.display = 'none';
+            document.getElementById('tap-instruction').style.display = 'none';
+            document.getElementById('next-page-btn').style.display = 'none';
+
+            document.body.style.backgroundColor = '#130b17';
+
+            const finalScreen = document.getElementById('final-screen');
+            finalScreen.style.display = 'block';
+            finalScreen.classList.add('fade-in');
+            
+            document.body.style.justifyContent = 'center';
+
+            // --- REAL AUDIO LAUNCH ENGINE ---
+            const audio = document.getElementById('bg-music');
+            audio.play().then(() => {
+                // Adjust UI items if browser permits autoplay successful execution
+                document.getElementById('vinyl').style.animationPlayState = 'running';
+                document.getElementById('play-icon').innerText = '⏸';
+            }).catch(err => console.log("Autoplay context waiting for manual click interaction override"));
+
+            // Monitor real progress metrics to animate progress bar timeline
+            audio.addEventListener('timeupdate', () => {
+                const percentage = (audio.currentTime / audio.duration) * 100;
+                document.getElementById('track-progress').style.width = `${percentage}%`;
+            });
+        }
+
+        // Toggle engine to pause or play tracking
+        function toggleAudio() {
+            const audio = document.getElementById('bg-music');
+            const vinyl = document.getElementById('vinyl');
+            const icon = document.getElementById('play-icon');
+
+            if (audio.paused) {
+                audio.play();
+                vinyl.style.animationPlayState = 'running';
+                icon.innerText = '⏸';
+            } else {
+                audio.pause();
+                vinyl.style.animationPlayState = 'paused';
+                icon.innerText = '▶';
+            }
+        }
+
+        function spawnStar(event) {
+            const skyBox = document.getElementById('skyBox');
+            const prompt = document.getElementById('skyPrompt');
+            if (prompt) prompt.remove();
+
+            const rect = skyBox.getBoundingClientRect();
+            const clickX = event.clientX - rect.left;
+            const clickY = event.clientY - rect.top;
+
+            const star = document.createElement('div');
+            star.classList.add('interactive-star');
+            star.innerText = '✨';
+            star.style.left = `${clickX - 9}px`; 
+            star.style.top = `${clickY - 9}px`;
+            skyBox.appendChild(star);
+
+            const textBlock = document.createElement('div');
+            textBlock.classList.add('star-wish-text');
+            textBlock.innerText = starWishes[wishIndex];
+            textBlock.style.left = `${clickX}px`;
+            textBlock.style.top = `${clickY}px`;
+            skyBox.appendChild(textBlock);
+
+            wishIndex = (wishIndex + 1) % starWishes.length;
+
+            setTimeout(() => {
+                star.remove();
+                textBlock.remove();
+            }, 2000);
         }
     </script>
 </body>
