@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Special Surprise for Maya</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ffeef2;
+            color: #d63384;
+            text-align: center;
+        }
+        .container {
+            padding: 20px;
+        }
+        button {
+            padding: 12px 24px;
+            font-size: 18px;
+            background-color: #d63384;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: scale(1.1);
+        }
+        .hidden { 
+            display: none; 
+        }
+    </style>
+</head>
+<body>
+
+    <div id="start-card" class="container">
+        <h1>Hey Maya! I made a little something for you. ❤️</h1>
+        <p>Click the button below to open it.</p>
+        <button onclick="revealSurprise()">Click Me</button>
+    </div>
+
+    <div id="surprise-card" class="container hidden">
+        <h1>Surprise! 🎉</h1>
+        <p>It works! This is just the beginning. I can't wait to show you what's next.</p>
+    </div>
+
+    <script>
+        function revealSurprise() {
+            document.getElementById('start-card').classList.add('hidden');
+            document.getElementById('surprise-card').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
